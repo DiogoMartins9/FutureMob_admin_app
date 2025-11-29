@@ -36,8 +36,8 @@ public class CategoriaController {
 		}
 	}
 
-	@PostMapping(value = "/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> criar(@ModelAttribute Categoria obj) {
+	@PostMapping(value = "/criar", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> criar(@RequestBody Categoria obj) {
 		try {
 			rep.save(obj);
 			return ResponseEntity.ok(obj);
@@ -50,18 +50,14 @@ public class CategoriaController {
 
 	@PutMapping(value = "/atualizar/{id}")
 	public Categoria atualizar(@PathVariable Integer id, @RequestBody Categoria obj_atualizado) {
-		Optional<Categoria> op = rep.findById(id);
-
-		if (op.isPresent()) {
-			Categoria obj_atual = op.get();
-			obj_atual = obj_atualizado;
-
-			rep.save(obj_atual);
-			return obj_atual;
-		} else {
+		if (!rep.existsById(id)) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-		}
+		} 
+
+		obj_atualizado.setIdCategoria(id);
+		return rep.save(obj_atualizado);
 	}
+
 
 	@DeleteMapping("/{id}")
 	public Categoria remover(@PathVariable Integer id) {

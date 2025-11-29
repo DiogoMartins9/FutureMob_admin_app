@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-FutureMobApplication<future-mob>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "br.com.future_mob.FutureMobApplication",
+            "projectName": "future-mob",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

@@ -36,8 +36,8 @@ public class ProdutoController {
 		}		
 	}
 
-	@PostMapping(value = "/criar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<?> criar(@ModelAttribute Produto obj) {
+	@PostMapping(value = "/criar", consumes = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<?> criar(@RequestBody Produto obj) {
 		try {
 			rep.save(obj);
 			return ResponseEntity.ok(obj);
@@ -49,20 +49,15 @@ public class ProdutoController {
 	}
 		
 	@PutMapping(value = "/atualizar/{id}")
-	public Produto atualizar(@PathVariable Integer id, @RequestBody Produto obj_atualizado) {	
-		Optional<Produto> op = rep.findById(id);
-		
-		if(op.isPresent()) {			
-			Produto obj_atual = op.get();		
-			obj_atual = obj_atualizado;
-			
-			rep.save(obj_atual);		
-			return obj_atual;			
-		} else {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-		}		
-	}
-	
+	public Produto atualizar(@PathVariable Integer id, @RequestBody Produto obj_atualizado) {
+    if (!rep.existsById(id)) {
+        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+    }
+
+    obj_atualizado.setIdProduto(id);
+    return rep.save(obj_atualizado);
+}
+
 	@DeleteMapping("/{id}")
 	public Produto remover(@PathVariable Integer id) {
 		Optional<Produto> op = rep.findById(id);
