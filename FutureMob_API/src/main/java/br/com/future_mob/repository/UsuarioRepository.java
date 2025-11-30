@@ -22,6 +22,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer>{
             , email
             , admin
             , caminho_img_perfil
+            , ativo
         FROM 
             usuarios
         WHERE

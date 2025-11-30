@@ -29,26 +29,30 @@ public class UsuarioController {
 	
 	//Código para o login funcionar no app
 	@PostMapping(value = "/autenticar", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> autenticar(@RequestBody AutenticacaoDTO dto) {
-		try {
-			UsuarioProjection usr = rep.autenticar(dto.getEmail(), dto.getSenha());
-			if (usr == null) {
-				return ResponseEntity
-					.status(HttpStatus.NOT_FOUND)
-					.body("Usuário não encontrado.");
-			} else if (!usr.getAdmin()) {
-				return ResponseEntity
-					.status(HttpStatus.UNAUTHORIZED)
-					.body("Você não tem permissão para acessar o painel administrativo.");				
-			}
-			
-			return ResponseEntity.ok(usr);
-		} catch (Exception ex) {
-			return ResponseEntity
-				.status(HttpStatus.BAD_REQUEST)
-				.body("Ocorreu um erro ao autenticar você: " + ex.getMessage());
-		}
-	}
+public ResponseEntity<?> autenticar(@RequestBody AutenticacaoDTO dto) {
+    try {
+        UsuarioProjection usr = rep.autenticar(dto.getEmail(), dto.getSenha());
+        if (usr == null) {
+            return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body("Usuário não encontrado.");
+        } else if (!usr.getAdmin()) {
+            return ResponseEntity
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("Você não tem permissão para acessar o painel administrativo.");
+        } else if (usr.getAtivo() != null && !usr.getAtivo()) {
+            return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body("Sua conta está desativada. Entre em contato com o suporte.");
+        }
+
+        return ResponseEntity.ok(usr);
+    } catch (Exception ex) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body("Ocorreu um erro ao autenticar você: " + ex.getMessage());
+    }
+}
 
 
 	// //Código para o login funcionar no site
@@ -123,6 +127,24 @@ public class UsuarioController {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
 		}		
 	}
+
+	@PutMapping("/{id}/ativar-desativar")
+    public ResponseEntity<Usuario> ativarDesativar(@PathVariable Integer id) {
+        Optional<Usuario> op = rep.findById(id);
+
+        if (op.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Usuario usuario = op.get();
+
+        // inverte o status atual
+        boolean novoStatus = !Boolean.TRUE.equals(usuario.getAtivo());
+        usuario.setAtivo(novoStatus);
+
+        rep.save(usuario);
+        return ResponseEntity.ok(usuario);
+    }
 	
 	@DeleteMapping("/{id}")
 	public Usuario remover(@PathVariable Integer id) {	

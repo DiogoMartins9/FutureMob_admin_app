@@ -13,4 +13,5 @@ public interface UsuarioProjection {
     String getEmail();
     Boolean getAdmin();
     String getCaminhoImgPerfil();
+    Boolean getAtivo();
 }

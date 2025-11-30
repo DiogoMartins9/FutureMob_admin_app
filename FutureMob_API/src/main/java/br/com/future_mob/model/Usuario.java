@@ -45,6 +45,9 @@ public class Usuario {
     @Column(name = "caminho_img_perfil", length = 200)
     private String caminhoImgPerfil;
 
+    @Column(name = "ativo", nullable = false)
+    private Boolean ativo = true;
+
     public Usuario() { }
 
     public Usuario(
@@ -65,6 +68,7 @@ public class Usuario {
         this.email = email;
         this.senha = senha;
         this.admin = false;
+        this.ativo = true;
     }
 
     public Integer getIdUsuario() {
@@ -153,5 +157,13 @@ public class Usuario {
 
     public void setCaminhoImgPerfil(String caminhoImgPerfil) {
         this.caminhoImgPerfil = caminhoImgPerfil;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
     }
 }
